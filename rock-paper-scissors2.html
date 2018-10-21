@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Rock Paper Scissors</title>
+  <style>
+  button {
+    font-weight: bold;
+    display: inline block;
+    margin: 30px auto;
+    background: grey;
+    border-radius: 5px;
+    width: 200px;
+    height: 50px;
+    font-size: 17px;
+    color: white;
+  }
+  p, h2 {
+    color: black;
+    margin: 0;
+    padding: 10px 100px;
+    font-size: 18px;
+    font-weight: normal;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+  input {
+    text-align: center;
+    width: 5%;
+    padding: 5px 5px 8px 8px;
+    margin-left: 20px;
+    color: black;
+    background-color: #f7f7f7;
+    font-size: 14px;
+  }
+  .losing {
+
+  }
+  .winning {
+
+  }
+  </style>
+</head>
+
+<body>
+  <h2>Let's play rock paper scissors!</h2><br>
+  <p>How many games do you want to play?<input id="gamenumber" type="text"></p>
+  <p>Make your move:
+    <button type="button" id="rock">Rock</button>
+    <button type="button" id="paper">Paper</button>
+    <button type="button" id="scissors">Scissors</button>
+    <p id="update"></p>
+    <p id="status"></p>
+    <p id="gameoverstatus"></p>
+    <button type="button" id="startover">Start Over</button>
+  </p>
+
+  <script>
+    // removed all variable assignment from functions during troubleshooting, probably not needed
+    let gamesplayed = 0;
+    let totalwins = 0;
+    let totallosses = 0;
+    let computerSelection = "rock";
+    let scoremessage = "";
+    let finalscoreword = "";
+    let rand123 = 0;
+    let gameresults = [];
+    let gamenumber = 0
+    let playerSelection = "rock"
+    const update = document.getElementById("update");
+    const status = document.getElementById("status");
+    const gameoverstatus = document.getElementById("gameoverstatus");
+
+    // function to determine winner of rock paper scissors game
+    function computerPlay(playerSelection, computerSelection) {
+      switch (playerSelection) {
+        case "rock":
+          switch (computerSelection) {
+            case "rock":
+              return ["tie", "ties"];
+              break;
+            case "paper":
+              return ["lose", "gets covered by"];
+              break;
+            case "scissors":
+              return ["win", "smashes"];
+              break;
+          }
+        case "paper":
+          switch (computerSelection) {
+            case "rock":
+              return ["win", "covers"];
+              break;
+            case "paper":
+              return ["tie", "ties"];
+              break;
+            case "scissors":
+              return ["lose", "gets cut by"];
+              break;
+          }      
+        case "scissors":
+          switch (computerSelection) {
+            case "rock":
+              return ["lose", "get smashed by"];
+              break;
+            case "paper":
+              return ["win", "cut"];
+              break;
+            case "scissors":
+              return ["tie", "tie"];
+              break;
+          }
+      }
+    }
+
+    //click to play the game
+    const buttonClick = document.querySelectorAll('button');
+    buttonClick.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        if (button.id == "startover") {
+          document.getElementById("update").innerHTML = ""
+          document.getElementById("status").innerHTML = ""
+          document.getElementById("gameoverstatus").innerHTML = ""
+          totalwins = 0
+          totallosses = 0
+          gamesplayed = 0
+        }
+        else {
+
+          playerSelection = button.id;
+
+          // random number generator to make computer's selection
+          rand123 = Math.random();
+          if (rand123 < 0.33) {
+            computerSelection = "rock";
+          }
+          else if (rand123 < 0.66) {
+            computerSelection = "paper";
+          }
+          else {
+            computerSelection = "scissors";
+          }
+          // run rock paper scissors function above
+          gameresults = computerPlay(playerSelection, computerSelection);
+          
+          // tabulate score and share results
+          gamesplayed += 1;
+          gamenumber = document.getElementById("gamenumber").value;
+          if (gamesplayed > gamenumber) {
+            document.getElementById("gameoverstatus").innerHTML = "The game is over. Click 'Start Over' to try again."
+          }
+          else {
+            if (gameresults[0] == "win") {
+              totalwins += 1;
+              update.style.color = "green";
+            } else if (gameresults[0] == "lose") {
+                totallosses += 1;
+                update.style.color = "red";
+              }
+            
+            if (totalwins > totallosses) {
+              scoremessage = "You're winning!";
+              finalscoreword = "won! ";
+              status.style.color = "green";
+            } else if (totalwins == totallosses) {
+                scoremessage = "It's a tie!";
+                finalscoreword = "tied! ";
+                status.style.color = "black";
+              } else {
+                  scoremessage = "You're losing!";
+                  finalscoreword = "lost! ";
+                  status.style.color = "red";
+                }
+            
+            document.getElementById("update").innerHTML = playerSelection + " " + gameresults[1] + " " + computerSelection;
+
+            if (gamesplayed < gamenumber) {
+              document.getElementById("status").innerHTML = "Game " + gamesplayed + " of " + gamenumber + ". " + scoremessage + " The score is " + totalwins + " to " + totallosses + ".";
+            } else {
+                  document.getElementById("status").innerHTML = "The game is over. You " + finalscoreword + totalwins + " to " + totallosses + ".";
+            }       
+          }
+        }  
+      });
+    });
+
+  </script>
+</body>
+</html>
